@@ -6,7 +6,66 @@
         xmlns:local="clr-namespace:LaptopRental"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <Grid>
+    <TabControl>
+        <TabItem Header="Main">
+            <Grid Background="#FFE5E5E5" Margin="10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="40*"/>
+                    <ColumnDefinition Width="70*"/>
+                </Grid.ColumnDefinitions>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="50"/>
+                        <RowDefinition Height="50" />
+                        <RowDefinition Height="50" />
+                        <RowDefinition Height="50" />
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Label Content="Brand" Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                    <ComboBox Name="BrandSelection" SelectionChanged="BrandSelection_SelectionChanged" Height="25" HorizontalAlignment="Right" MinWidth="125" MaxWidth="200" VerticalAlignment="Center"  Grid.Row="0" />
 
-    </Grid>
+                    <Label Content="Start Date" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                    <DatePicker Name="StartDatePicker" Grid.Row="1" MinWidth="125" MaxWidth="200" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <Label Content="End Date" Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                    <DatePicker Name="EndDatePicker" Grid.Row="2" MinWidth="125" MaxWidth="200" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <Button Name="SearchButtoon" Content="Search" Grid.Row="3" Background="Green" Foreground="White" BorderBrush="Black" Width="Auto" Height="20" FontWeight="Bold"/>
+                    <Grid Grid.Row="4" Height="Auto">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Label Grid.Row="0" Content="Available Laptops"/>
+                        <ListBox Name="AvailableLaptops" Grid.Row="1" />
+                        
+                    </Grid>
+
+
+                </Grid>
+                    <Grid Grid.Column="1" Margin="40 0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                    <Grid Grid.Column="0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Text="Laptop Rental" FontSize="20" HorizontalAlignment="Center" FontWeight="Bold" FontFamily="Segoe Script"/>
+                        <TextBlock Text="Selected Laptop" FontWeight="Bold" Grid.Row="2"/>
+                        <TextBlock Name="SelectedLaptopDetails" Grid.Row="3" Text="TestTest"/>
+                        <Button Name="BookButton" Content="Book" Background="DarkBlue" Foreground="White" FontWeight="Bold" Grid.Row="4" Height="25" MaxWidth="300"/>
+                    </Grid>
+                    </Grid>
+            </Grid>
+        </TabItem>
+        <TabItem Header="Laptops">
+            <Grid Background="#FFE5E5E5"/>
+        </TabItem>
+        <TabItem Header="Bookings">
+            <Grid Background="#FFE5E5E5"/>
+        </TabItem>
+    </TabControl>
 </Window>
