@@ -12,6 +12,7 @@ namespace LaptopRental.Data
     {
         public DbSet<Brand> Brands {  get; set; }
         public DbSet<Laptop> Laptops { get; set; }
+        public DbSet<Booking> Bookings { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
