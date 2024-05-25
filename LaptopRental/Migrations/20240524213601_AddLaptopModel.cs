@@ -10,20 +10,20 @@ namespace LaptopRental.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropPrimaryKey(
+            _ = migrationBuilder.DropPrimaryKey(
                 name: "PK_brands",
                 table: "brands");
 
-            migrationBuilder.RenameTable(
+            _ = migrationBuilder.RenameTable(
                 name: "brands",
                 newName: "Brands");
 
-            migrationBuilder.AddPrimaryKey(
+            _ = migrationBuilder.AddPrimaryKey(
                 name: "PK_Brands",
                 table: "Brands",
                 column: "Id");
 
-            migrationBuilder.CreateTable(
+            _ = migrationBuilder.CreateTable(
                 name: "Laptops",
                 columns: table => new
                 {
@@ -35,8 +35,8 @@ namespace LaptopRental.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Laptops", x => x.Id);
-                    table.ForeignKey(
+                    _ = table.PrimaryKey("PK_Laptops", x => x.Id);
+                    _ = table.ForeignKey(
                         name: "FK_Laptops_Brands_BrandId",
                         column: x => x.BrandId,
                         principalTable: "Brands",
@@ -44,7 +44,7 @@ namespace LaptopRental.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "IX_Laptops_BrandId",
                 table: "Laptops",
                 column: "BrandId");
@@ -53,18 +53,18 @@ namespace LaptopRental.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
+            _ = migrationBuilder.DropTable(
                 name: "Laptops");
 
-            migrationBuilder.DropPrimaryKey(
+            _ = migrationBuilder.DropPrimaryKey(
                 name: "PK_Brands",
                 table: "Brands");
 
-            migrationBuilder.RenameTable(
+            _ = migrationBuilder.RenameTable(
                 name: "Brands",
                 newName: "brands");
 
-            migrationBuilder.AddPrimaryKey(
+            _ = migrationBuilder.AddPrimaryKey(
                 name: "PK_brands",
                 table: "brands",
                 column: "Id");

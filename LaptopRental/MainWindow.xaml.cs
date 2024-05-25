@@ -1,58 +1,18 @@
 ﻿using LaptopRental.Data;
 using LaptopRental.Models;
-using Microsoft.EntityFrameworkCore;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace LaptopRental
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
+
     public partial class MainWindow : Window
     {
-        ApplicationDbContext context = new ApplicationDbContext();
+        private readonly ApplicationDbContext context = new();
         public MainWindow()
         {
             InitializeComponent();
-
-            // Add initial brand data if none exists
-            if (!context.Brands.Any())
-            {
-                List<Brand> brands = new List<Brand> {
-                    new Brand("Any"),
-                    new Brand("Microsoft"),
-                    new Brand("Dell"),
-                    new Brand("Apple"),
-
-                };
-                context.Brands.AddRange(brands);
-                context.SaveChanges();
-            }
-
-            // Add initial laptop data if none exists
-            if (!context.Laptops.Any())
-            {
-                List<Laptop> laptops = new List<Laptop> {
-                    new Laptop(2, "Surface Pro", "i7 16GB 4K"),
-                    new Laptop(3, "XPS 15", "i7 32GB RTX 4070"),
-                    new Laptop(2, "Surface Duo", "i5 8GB Touchscreen"),
-                    new Laptop(3, "Latitude", "AMD Ryzen 8GB"),
-                    new Laptop(4, "Macbook Pro", "M3 Max 32GB"),
-                    new Laptop(4, "Macbook Air", "M2 8GB")
-                };
-                context.Laptops.AddRange(laptops);
-                context.SaveChanges();
-            }
+            SeedDatabase();
 
             BrandSelection.ItemsSource = context.Brands.ToList();
             // Select "Any" by default
@@ -66,64 +26,91 @@ namespace LaptopRental
             BookingsData.ItemsSource = context.Bookings.ToList();
         }
 
-        //private void BrandSelection_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        //{
-        //    // Check if "Any" selected
-        //    if (AvailableLaptops.SelectedIndex == 0)
-        //    {
-        //        AvailableLaptops.ItemsSource = context.Laptops.ToList();
+        private void SeedDatabase()
+        {
+            // Add initial brand data if none exists
+            if (!context.Brands.Any())
+            {
+                List<Brand> brands = [
+                    new Brand("Any"),
+                    new Brand("Microsoft"),
+                    new Brand("Dell"),
+                    new Brand("Apple"),
 
-        //    }
-        //    else AvailableLaptops.ItemsSource = context.Laptops.Where(l => l.Brand == BrandSelection.SelectedItem).ToList();
+                ];
+                context.Brands.AddRange(brands);
+                _ = context.SaveChanges();
+            }
 
-        //}
+            // Add initial laptop data if none exists
+            if (!context.Laptops.Any())
+            {
+                List<Laptop> laptops = [
+                    new Laptop(2, "Surface Pro", "i7 16GB 4K"),
+                    new Laptop(3, "XPS 15", "i7 32GB RTX 4070"),
+                    new Laptop(2, "Surface Duo", "i5 8GB Touchscreen"),
+                    new Laptop(3, "Latitude", "AMD Ryzen 8GB"),
+                    new Laptop(4, "Macbook Pro", "M3 Max 32GB"),
+                    new Laptop(4, "Macbook Air", "M2 8GB")
+                ];
+                context.Laptops.AddRange(laptops);
+                _ = context.SaveChanges();
+            }
+        }
+
 
         // Handle Booking submission
         private void BookButton_Click(object sender, RoutedEventArgs e)
         {
-
-
             // Check if laptop is selected
             if (AvailableLaptops.SelectedItem == null)
             {
-                MessageBox.Show("Please select a laptop to book");
+                _ = MessageBox.Show("Please select a laptop to book");
                 return;
             }
 
-            DateOnly startDate = DateOnly.FromDateTime(StartDatePicker.SelectedDate.Value.Date);
-            DateOnly endDate = DateOnly.FromDateTime(EndDatePicker.SelectedDate.Value.Date);
+            // Get selected dates and laptop
+            DateOnly[] selectedDates = { GetDateFromPicker(StartDatePicker), GetDateFromPicker(EndDatePicker) };
             Laptop laptop = (Laptop)AvailableLaptops.SelectedItem;
 
-            if(!CheckLaptopAvailability(laptop.Id, startDate, endDate) )
+            // Check if laptop is available for selected dates
+            if (!CheckLaptopAvailability(laptop.Id, startDate: selectedDates[0], endDate: selectedDates[1]))
             {
-                MessageBox.Show("Laptop not available for selected dates");
+                _ = MessageBox.Show("Laptop not available for selected dates");
                 return;
             }
 
+            AddNewBooking(startDate: selectedDates[0], endDate: selectedDates[1], laptop);
+        }
 
-            Booking booking = new Booking
+        private void AddNewBooking(DateOnly startDate, DateOnly endDate, Laptop laptop)
+        {
+            // Create booking
+            Booking booking = new()
             {
                 StartDate = startDate,
                 EndDate = endDate,
                 Laptop = laptop
             };
+            _ = context.Bookings.Add(booking);
+            _ = context.SaveChanges();
+            RefreshBookingsDataGrid();
+        }
 
-            context.Bookings.Add(booking);
-            context.SaveChanges();
+        private void RefreshBookingsDataGrid()
+        {
             BookingsData.ItemsSource = context.Bookings.ToList();
-
-
         }
 
         // Checks if laptops available at selected dates
         public bool CheckLaptopAvailability(int laptopId, DateOnly startDate, DateOnly endDate)
         {
-            var bookings = context.Bookings.Where(b => b.LaptopId == laptopId);
+            IQueryable<Booking> bookings = context.Bookings.Where(b => b.LaptopId == laptopId);
             if (bookings.Any())
             {
-                foreach (var booking in bookings)
+                foreach (Booking? booking in bookings)
                 {
-                    if ((endDate < booking.StartDate) || (startDate > booking.EndDate))
+                    if ((endDate <= booking.StartDate) || (startDate >= booking.EndDate))
                     {
                         return true; // Laptop available
                     }
@@ -134,6 +121,7 @@ namespace LaptopRental
 
         }
 
+        // Clear available laptops list
         public void ResetAvailableLaptops(object sender, RoutedEventArgs e)
         {
             AvailableLaptops.ItemsSource = null;
@@ -144,21 +132,21 @@ namespace LaptopRental
             // Check if dates are selected
             if (StartDatePicker.SelectedDate == null || EndDatePicker.SelectedDate == null)
             {
-                MessageBox.Show("Please select both start and end dates");
+                _ = MessageBox.Show("Please select both start and end dates");
                 return false;
             }
 
             // Check if start date is in the past
             if (StartDatePicker.SelectedDate < DateTime.Now)
             {
-                MessageBox.Show("Start date cannot be in the past");
+                _ = MessageBox.Show("Start date cannot be in the past");
                 return false;
             }
 
             // Check if start date is after end date
             if (StartDatePicker.SelectedDate > EndDatePicker.SelectedDate)
             {
-                MessageBox.Show("Start date cannot be after end date");
+                _ = MessageBox.Show("Start date cannot be after end date");
                 return false;
             }
             return true;
@@ -166,34 +154,29 @@ namespace LaptopRental
 
         private void SearchButton_Click(object sender, RoutedEventArgs e)
         {
-            if (!ValidateSearchForm()) { return;}
+            // Check if form is valid
+            if (!ValidateSearchForm()) { return; }
 
-            var selectedBrand = BrandSelection.SelectedItem;
-            List<Laptop> laptops;
-
-            // Check if "Any" selected
-            if (selectedBrand == context.Brands.FirstOrDefault(b => b.Name == "Any"))
-            {
-                laptops = context.Laptops.ToList();
-            }
-            // If not, get laptops of the selected brand
-            else laptops = context.Laptops.Where(l => l.Brand == selectedBrand).ToList();
+            // Get the laptops of the selected brand or all laptops
+            object selectedBrand = BrandSelection.SelectedItem;
+            List<Laptop> laptops = selectedBrand == context.Brands.FirstOrDefault(b => b.Name == "Any")
+                ? context.Laptops.ToList()
+                : context.Laptops.Where(l => l.Brand == selectedBrand).ToList();
 
             // Get the bookings only where the laptop is of the selected branc
-            var bookings = context.Bookings.Where(b => b.Laptop.Brand == selectedBrand).ToList();
+            List<Booking> bookings = context.Bookings.Where(b => b.Laptop.Brand == selectedBrand).ToList();
 
-            //
+            // List to store available laptops
             List<Laptop> availableLaptops = laptops;
 
             // For each booking, check if the dates clash with selected search dates for the laptop
-            DateOnly startDate = DateOnly.FromDateTime(StartDatePicker.SelectedDate.Value.Date);
-            DateOnly endDate = DateOnly.FromDateTime(EndDatePicker.SelectedDate.Value.Date);
-            foreach (var booking in bookings)
+            DateOnly[] selectedDates = { GetDateFromPicker(StartDatePicker), GetDateFromPicker(EndDatePicker) };
+            foreach (Booking? booking in bookings)
             {
                 // If laptop is not available, remove from available laptops list
-                if(!CheckLaptopAvailability(booking.LaptopId, startDate, endDate))
+                if (!CheckLaptopAvailability(booking.LaptopId, startDate: selectedDates[0], endDate: selectedDates[1]))
                 {
-                    availableLaptops.Remove(booking.Laptop);
+                    _ = availableLaptops.Remove(booking.Laptop);
                 }
             }
 
@@ -202,5 +185,12 @@ namespace LaptopRental
 
         }
 
+        // Gets date from date picker and returns DateOnly
+        private DateOnly GetDateFromPicker(DatePicker datePicker)
+        {
+            return DateOnly.FromDateTime(datePicker.SelectedDate.Value.Date);
+        }
+
     }
+
 }

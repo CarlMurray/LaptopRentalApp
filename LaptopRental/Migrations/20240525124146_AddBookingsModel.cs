@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -11,7 +10,7 @@ namespace LaptopRental.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
+            _ = migrationBuilder.CreateTable(
                 name: "Bookings",
                 columns: table => new
                 {
@@ -23,8 +22,8 @@ namespace LaptopRental.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Bookings", x => x.Id);
-                    table.ForeignKey(
+                    _ = table.PrimaryKey("PK_Bookings", x => x.Id);
+                    _ = table.ForeignKey(
                         name: "FK_Bookings_Laptops_LaptopId",
                         column: x => x.LaptopId,
                         principalTable: "Laptops",
@@ -32,7 +31,7 @@ namespace LaptopRental.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "IX_Bookings_LaptopId",
                 table: "Bookings",
                 column: "LaptopId");
@@ -41,7 +40,7 @@ namespace LaptopRental.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
+            _ = migrationBuilder.DropTable(
                 name: "Bookings");
         }
     }
