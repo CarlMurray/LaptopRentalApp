@@ -1,7 +1,10 @@
 ﻿using LaptopRental.Data;
 using LaptopRental.Models;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace LaptopRental
 {
@@ -58,7 +61,6 @@ namespace LaptopRental
             }
         }
 
-
         // Handle Booking submission
         private void BookButton_Click(object sender, RoutedEventArgs e)
         {
@@ -81,6 +83,17 @@ namespace LaptopRental
             }
 
             AddNewBooking(startDate: selectedDates[0], endDate: selectedDates[1], laptop);
+            MessageBox.Show("Booking successful!");
+            ResetFormInputs();
+
+        }
+
+        private void ResetFormInputs()
+        {
+            BrandSelection.SelectedIndex = 0;
+            StartDatePicker.SelectedDate = null;
+            EndDatePicker.SelectedDate = null;
+            AvailableLaptops.ItemsSource = null;
         }
 
         private void AddNewBooking(DateOnly startDate, DateOnly endDate, Laptop laptop)
@@ -191,6 +204,42 @@ namespace LaptopRental
             return DateOnly.FromDateTime(datePicker.SelectedDate.Value.Date);
         }
 
+        // Handle laptop selection details display update
+        private void AvailableLaptops_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            // Check if laptop is selected - required for when ResetFormInputs is called
+            if (!(AvailableLaptops.ItemsSource == null))
+            {
+                Uri uri = new($"Images/{((Laptop)AvailableLaptops.SelectedItem).Name}.jpg", UriKind.Relative);
+                SelectedLaptopImage.Source = new BitmapImage(uri);
+                StringBuilder laptopDetails = new StringBuilder();
+                laptopDetails.AppendLine($"Brand: {((Laptop)AvailableLaptops.SelectedItem).Brand}");
+                laptopDetails.AppendLine($"Name: {((Laptop)AvailableLaptops.SelectedItem).Name}");
+                laptopDetails.AppendLine($"Specs: {((Laptop)AvailableLaptops.SelectedItem).Description}");
+                laptopDetails.AppendLine($"Start Date: {GetDateFromPicker(StartDatePicker)}");
+                laptopDetails.AppendLine($"End Date: {GetDateFromPicker(EndDatePicker)}");
+                SelectedLaptopDetails.Text = laptopDetails.ToString();
+            }
+            else
+            {
+                SelectedLaptopImage.Source = null;
+                SelectedLaptopDetails.Text = "";
+            }
+        }
+
+        // Handle booking deletion
+        private void DeleteBookingBtn_Click(object sender, RoutedEventArgs e)
+        {
+            var booking = BookingsData.SelectedItem;
+            if (booking == null)
+            {
+                _ = MessageBox.Show("Please select a booking to delete");
+                return;
+            }
+            context.Bookings.Remove((Booking)booking);
+            context.SaveChanges();
+            RefreshBookingsDataGrid();
+        }
     }
 
 }

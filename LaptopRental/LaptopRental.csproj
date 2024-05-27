@@ -9,12 +9,30 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Images\latitude.jpg" />
+    <None Remove="Images\Macbook Air.jpg" />
+    <None Remove="Images\Macbook Pro.jpg" />
+    <None Remove="Images\Surface Duo.jpg" />
+    <None Remove="Images\surface pro.jpg" />
+    <None Remove="Images\XPS 15.jpg" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.5" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.5" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.5">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Images\Macbook Air.jpg" />
+    <Resource Include="Images\Latitude.jpg" />
+    <Resource Include="Images\Macbook Pro.jpg" />
+    <Resource Include="Images\Surface Duo.jpg" />
+    <Resource Include="Images\Surface Pro.jpg" />
+    <Resource Include="Images\XPS 15.jpg" />
   </ItemGroup>
 
 </Project>

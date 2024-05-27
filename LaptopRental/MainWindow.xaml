@@ -35,16 +35,16 @@
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
                         <Label Grid.Row="0" Content="Available Laptops"/>
-                        <ListBox Name="AvailableLaptops" Grid.Row="1" />
-                        
+                        <ListBox Name="AvailableLaptops" Grid.Row="1" SelectionChanged="AvailableLaptops_SelectionChanged" />
+
                     </Grid>
 
 
                 </Grid>
-                    <Grid Grid.Column="1" Margin="40 0">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition/>
-                        </Grid.ColumnDefinitions>
+                <Grid Grid.Column="1" Margin="40 0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
                     <Grid Grid.Column="0">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
@@ -53,12 +53,13 @@
                             <RowDefinition/>
                             <RowDefinition/>
                         </Grid.RowDefinitions>
+                        <Image Name="SelectedLaptopImage"  Grid.Row="1" Margin="10" MaxHeight="200"/>
                         <TextBlock Text="Laptop Rental" FontSize="20" HorizontalAlignment="Center" FontWeight="Bold" FontFamily="Segoe Script"/>
                         <TextBlock Text="Selected Laptop" FontWeight="Bold" Grid.Row="2"/>
-                        <TextBlock Name="SelectedLaptopDetails" Grid.Row="3" Text="TestTest"/>
+                        <TextBlock Name="SelectedLaptopDetails" Grid.Row="3"/>
                         <Button Name="BookButton" Content="Book" Background="DarkBlue" Foreground="White" FontWeight="Bold" Grid.Row="4" Height="25" MaxWidth="300" Click="BookButton_Click"/>
                     </Grid>
-                    </Grid>
+                </Grid>
             </Grid>
         </TabItem>
         <TabItem Header="Laptops">
@@ -69,8 +70,9 @@
         </TabItem>
         <TabItem Header="Bookings">
             <Grid Background="#FFE5E5E5">
-            <DataGrid Name="BookingsData"/>
-                </Grid>
+                <DataGrid Name="BookingsData" />
+            <Button Name="DeleteBookingBtn" Content="Delete" Width="100" Height="25" HorizontalAlignment="Right" VerticalAlignment="Bottom" Click="DeleteBookingBtn_Click"/>
+            </Grid>
         </TabItem>
     </TabControl>
 </Window>
